@@ -89,6 +89,7 @@ class StreamlitCostWorksheetTests(unittest.TestCase):
         app.session_state["checklist_statuses"] = {}
         app.session_state["analysis_version"] = 1
         app.run()
+        self.assertEqual(len(app.download_button), 1)
 
         app.number_input(key="cost_labour").set_value(1000)
         app.number_input(key="cost_materials").set_value(500)

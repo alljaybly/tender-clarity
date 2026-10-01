@@ -39,7 +39,7 @@ Build mode: learn � explain each verified slice in plain language, then guide 
   Learner check: Enter several costs and a benchmark value; tell me whether the results and estimate disclaimer are understandable.
   Commit: `Add contractor cost viability worksheet`
 
-- [ ] **4. Download the complete Tender Clarity report**
+- [x] **4. Download the complete Tender Clarity report**
   Becomes usable: A PDF report reflects current findings, sources, checklist, next actions, and cost values.
   Why now: The complete report depends on analysis and contractor edits being available first.
   PRD ref: `prd.md > Download report`, `prd.md > The Core Journey`
@@ -78,3 +78,5 @@ Activity mode: [live app and editor, explicit static fallback, focused alternati
 - Checklist slice verified with controlled results and citations matched against extracted synthetic PDF pages; live Gemini remains pending after the confirmed 503.
 
 - Cost worksheet verified with arithmetic boundary tests and controlled Streamlit interaction; the live Gemini check remains pending and was not needed for this slice.
+
+- PDF report generation verified against controlled results, source verification labels, checklist statuses, ZAR values, and the zero-value margin edge case; live Gemini was not required.

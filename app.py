@@ -6,6 +6,7 @@ from tender_clarity.analysis import AnalysisError, analyze_pages
 from tender_clarity.costs import calculate_costs
 from tender_clarity.pdf_reader import PDFInputError, extract_pages
 from tender_clarity.providers.gemini import GeminiProvider
+from tender_clarity.report import generate_report
 
 st.set_page_config(page_title="Tender Clarity", page_icon="🍃", layout="wide")
 st.markdown("""
@@ -226,5 +227,24 @@ if analysis:
     render_checklist(analysis.get("checklist", []), analysis.get("next_actions", []))
     st.divider()
     render_cost_worksheet()
+    cost_keys = ("labour", "materials", "transport", "equipment", "overheads", "other")
+    current_costs = {key: st.session_state.get(f"cost_{key}", 0) for key in cost_keys}
+    current_contract_value = st.session_state.get("cost_expected_contract_value", 0)
+    report_bytes = generate_report(
+        analysis,
+        st.session_state.checklist_statuses,
+        current_costs,
+        current_contract_value,
+    )
+    st.divider()
+    st.subheader("Download report")
+    st.write("Download the current overview, evidence, checklist, and ZAR worksheet as a PDF.")
+    st.download_button(
+        "Download complete report (PDF)",
+        data=report_bytes,
+        file_name="tender_clarity_report.pdf",
+        mime="application/pdf",
+        width="stretch",
+    )
     st.caption("The analysis helps with preparation; it does not predict or guarantee a tender outcome.")
     st.caption("Your analysis is available only in this browser session. Refreshing the page clears it.")
