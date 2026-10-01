@@ -1,0 +1,4 @@
+streamlit==1.64.0
+google-genai==2.26.0
+pypdf==6.19.0
+reportlab==5.0.1
