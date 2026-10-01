@@ -29,7 +29,7 @@ Build mode: learn � explain each verified slice in plain language, then guide 
   Learner check: Complete one item and inspect one clarification item. Tell me if each explains what to do, why it matters, what is needed, and how completion is known.
   Commit: `Add interactive tender preparation checklist`
 
-- [ ] **3. Enter costs and see the viability arithmetic update**
+- [x] **3. Enter costs and see the viability arithmetic update**
   Becomes usable: ZAR costs and expected/benchmark value recalculate total cost, amount remaining, and estimated margin immediately.
   Why now: Adds the pursuit decision through transparent arithmetic after requirements are actionable.
   PRD ref: `prd.md > Cost worksheet`, `prd.md > States and Boundaries`
@@ -76,3 +76,5 @@ Activity mode: [live app and editor, explicit static fallback, focused alternati
 - Continued building with the controlled synthetic fixture after live Gemini returned HTTP 503 UNAVAILABLE; live service verification remains pending.
 
 - Checklist slice verified with controlled results and citations matched against extracted synthetic PDF pages; live Gemini remains pending after the confirmed 503.
+
+- Cost worksheet verified with arithmetic boundary tests and controlled Streamlit interaction; the live Gemini check remains pending and was not needed for this slice.

@@ -77,5 +77,28 @@ class StreamlitChecklistTests(unittest.TestCase):
         self.assertEqual(app.session_state["checklist_statuses"]["tax-action"], "TO_DO")
 
 
+class StreamlitCostWorksheetTests(unittest.TestCase):
+    def test_cost_inputs_recalculate_and_show_below_cost_warning(self):
+        app = AppTest.from_file(str(ROOT / "app.py")).run()
+        fixture = ROOT / "fixtures" / "synthetic_cleaning_tender.pdf"
+        pages = extract_pages(fixture.name, fixture.read_bytes())
+        page_texts = {page.number: page.text for page in pages}
+        app.session_state["analysis"] = validate_result_sources(controlled_analysis(), page_texts)
+        app.session_state["pages"] = page_texts
+        app.session_state["filename"] = fixture.name
+        app.session_state["checklist_statuses"] = {}
+        app.session_state["analysis_version"] = 1
+        app.run()
+
+        app.number_input(key="cost_labour").set_value(1000)
+        app.number_input(key="cost_materials").set_value(500)
+        app.number_input(key="cost_expected_contract_value").set_value(1000).run()
+        metrics = {metric.label: metric.value for metric in app.metric}
+        self.assertEqual(metrics["Total estimated costs"], "R 1,500.00")
+        self.assertEqual(metrics["Amount remaining"], "R -500.00")
+        self.assertEqual(metrics["Estimated margin"], "-50.00%")
+        self.assertTrue(any("below your estimated costs" in item.value for item in app.error))
+
+
 if __name__ == "__main__":
     unittest.main()

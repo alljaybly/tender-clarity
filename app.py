@@ -3,6 +3,7 @@
 import streamlit as st
 
 from tender_clarity.analysis import AnalysisError, analyze_pages
+from tender_clarity.costs import calculate_costs
 from tender_clarity.pdf_reader import PDFInputError, extract_pages
 from tender_clarity.providers.gemini import GeminiProvider
 
@@ -94,6 +95,57 @@ def render_checklist(items, next_actions):
                 st.write(f"{number}. {text}")
 
 
+def format_zar(amount):
+    return f"R {amount:,.2f}"
+
+
+def render_cost_worksheet():
+    st.header("Cost worksheet")
+    st.write("Enter your own estimated costs and expected or benchmark contract value. Amounts are in South African Rand (ZAR).")
+    categories = [
+        ("labour", "Labour"),
+        ("materials", "Materials"),
+        ("transport", "Transport"),
+        ("equipment", "Equipment"),
+        ("overheads", "Overheads"),
+        ("other", "Other expenses"),
+    ]
+    columns = st.columns(3)
+    entered_costs = {}
+    for index, (key, label) in enumerate(categories):
+        with columns[index % 3]:
+            entered_costs[key] = st.number_input(
+                label,
+                min_value=0.0,
+                value=0.0,
+                step=100.0,
+                key=f"cost_{key}",
+                help="Enter your estimated amount in ZAR.",
+            )
+    expected_value = st.number_input(
+        "Expected or benchmark contract value (ZAR)",
+        min_value=0.0,
+        value=0.0,
+        step=100.0,
+        key="cost_expected_contract_value",
+        help="This is your own expected or benchmark value, not a recommended bid price.",
+    )
+    result = calculate_costs(entered_costs, expected_value)
+    summary = st.columns(3)
+    summary[0].metric("Total estimated costs", format_zar(result["total_estimated_costs"]))
+    summary[1].metric("Expected / benchmark value", format_zar(result["expected_contract_value"]))
+    summary[2].metric("Amount remaining", format_zar(result["amount_remaining"]))
+    if result["margin_percent"] is None:
+        st.metric("Estimated margin", "Not available")
+        st.info("Enter an expected or benchmark value above R 0 to calculate a percentage margin. The amount remaining is still shown.")
+    else:
+        st.metric("Estimated margin", f"{result['margin_percent']:.2f}%")
+    if result["below_estimated_cost"]:
+        st.error(f"The entered value is below your estimated costs by {format_zar(abs(result['amount_remaining']))}. Review the costs and value you entered.")
+    elif result["expected_contract_value"] > 0:
+        st.success("The entered value covers the costs listed above. This is only a basic estimate.")
+    st.caption("Estimate based only on the costs you entered. This is not accounting or financial advice and does not recommend what price to bid.")
+
 st.markdown('<div class="tc-hero"><h1>Tender Clarity</h1><p><b>Every contractor deserves a clear shot.</b></p><p class="tc-muted">You do not need to be a big company to understand a tender. Let us make it clear.</p></div>', unsafe_allow_html=True)
 st.write("")
 
@@ -172,5 +224,7 @@ if analysis:
         st.divider()
 
     render_checklist(analysis.get("checklist", []), analysis.get("next_actions", []))
+    st.divider()
+    render_cost_worksheet()
     st.caption("The analysis helps with preparation; it does not predict or guarantee a tender outcome.")
     st.caption("Your analysis is available only in this browser session. Refreshing the page clears it.")
