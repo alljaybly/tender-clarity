@@ -12,3 +12,5 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+# Real tender documents used for local demos
+fixtures/demo/

@@ -1,4 +1,4 @@
-﻿"""Google Gemini Free Tier adapter. No paid fallback or automatic provider switch."""
+"""Google Gemini Free Tier adapter. No paid fallback or automatic provider switch."""
 
 import json
 
@@ -9,7 +9,7 @@ from google.genai.errors import APIError as GeminiAPIError
 from tender_clarity.analysis import AnalysisError
 from tender_clarity.models import ANALYSIS_SCHEMA
 
-MODEL = "gemini-3.8-flash"
+MODEL = "gemini-3.5-flash-lite"
 
 
 def explain_api_error(exc: GeminiAPIError) -> AnalysisError:
